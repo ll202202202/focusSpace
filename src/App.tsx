@@ -96,9 +96,22 @@ export function App({ store, repositories, now = Date.now }: AppProps) {
       <main className="app-main immersive-timer">
         <TimerScreen store={focusStore} now={now} />
       </main>
+      <div className="fullscreen-control">
+        <button type="button" aria-label="进入全屏" title="进入全屏" onClick={() => void requestFullscreen()}>
+          ⛶
+        </button>
+      </div>
       {isSettingsOpen && <SettingsDialog store={focusStore} onClose={() => setIsSettingsOpen(false)} />}
     </div>
   )
+}
+
+async function requestFullscreen(): Promise<void> {
+  try {
+    await document.documentElement.requestFullscreen()
+  } catch {
+    // Fullscreen is optional; browsers can reject it when the feature is unavailable.
+  }
 }
 
 function getModeLabel(mode: TimerMode): string {

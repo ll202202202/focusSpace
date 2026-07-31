@@ -8,6 +8,7 @@ button, input, select { font: inherit; }
 .app-header h1 { margin: 0; font-size: clamp(1.6rem, 3vw, 2.7rem); font-weight: 800; letter-spacing: -.06em; text-shadow: 0 2px 18px rgb(0 0 0 / .22); }
 .app-kicker { margin: 0 0 .3rem; font-size: .76rem; opacity: .86; letter-spacing: .08em; }
 .icon-button { min-width: 3rem; min-height: 3rem; border: 1px solid rgb(255 255 255 / .75); border-radius: 50%; color: #fff; background: rgb(12 15 39 / .18); cursor: pointer; }
+.fullscreen-control { position:fixed; right:0; bottom:0; z-index:2; display:grid; width:7rem; height:7rem; padding:1.25rem; place-items:end; opacity:0; transform:translateY(.5rem); transition:opacity .2s ease,transform .2s ease; }.fullscreen-control:hover,.fullscreen-control:focus-within { opacity:1; transform:translateY(0); }.fullscreen-control button { width:2.9rem; height:2.9rem; border:1px solid rgb(255 255 255 / .8); border-radius:.75rem; color:#fff; background:rgb(8 18 51 / .5); font-size:1.7rem; line-height:1; cursor:pointer; backdrop-filter:blur(.5rem); }
 .immersive-timer { display: grid; min-height: calc(100vh - 8rem); place-items: center; padding: 6rem 0 2rem; }
 .timer-stage { display: grid; justify-items: center; width: min(100%, 40rem); gap: 1.25rem; text-align: center; }
 .timer-stage fieldset { display: flex; gap: .8rem; margin: 0; padding: 0; border: 0; }

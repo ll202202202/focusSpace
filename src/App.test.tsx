@@ -69,6 +69,21 @@ describe('App', () => {
     expect(screen.getByRole('main')).toHaveClass('immersive-timer')
   })
 
+  it('enters browser fullscreen from the lower-right control', () => {
+    const store = createStore()
+    const requestFullscreen = vi.fn().mockResolvedValue(undefined)
+    Object.defineProperty(document.documentElement, 'requestFullscreen', {
+      configurable: true,
+      value: requestFullscreen,
+    })
+
+    render(<App store={store} />)
+
+    fireEvent.click(screen.getByRole('button', { name: '进入全屏' }))
+
+    expect(requestFullscreen).toHaveBeenCalledOnce()
+  })
+
   it('plays a completion cue and sends a notification when both preferences allow it', async () => {
     const store = createStore()
     const notification = vi.fn()
