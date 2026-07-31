@@ -51,9 +51,9 @@ describe('TimerScreen', () => {
     render(<TimerScreen store={store} now={now} />)
 
     expect(screen.getByText('25:00')).toBeVisible()
-    fireEvent.click(screen.getByRole('button', { name: '开始专注' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Start focus' }))
 
-    expect(screen.getByRole('button', { name: '暂停' })).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Pause' })).toBeVisible()
   })
 
   it('uses a semantic fieldset to group timer mode controls', () => {
@@ -61,7 +61,7 @@ describe('TimerScreen', () => {
 
     render(<TimerScreen store={store} now={now} />)
 
-    expect(screen.getByRole('group', { name: '计时模式' }).tagName).toBe('FIELDSET')
+    expect(screen.getByRole('group', { name: 'Timer mode' }).tagName).toBe('FIELDSET')
   })
 
   it('exposes the countdown as a labelled time element', () => {
@@ -69,7 +69,7 @@ describe('TimerScreen', () => {
 
     render(<TimerScreen store={store} now={now} />)
 
-    expect(screen.getByLabelText('剩余时间').tagName).toBe('TIME')
+    expect(screen.getByLabelText('Time remaining').tagName).toBe('TIME')
   })
 
   it('decrements the visible time after one second while running without further user action', () => {
@@ -77,7 +77,7 @@ describe('TimerScreen', () => {
     const { store, now, setNow } = createStore()
 
     render(<TimerScreen store={store} now={now} />)
-    fireEvent.click(screen.getByRole('button', { name: '开始专注' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Start focus' }))
 
     expect(screen.getByText('25:00')).toBeVisible()
     act(() => {
@@ -94,14 +94,14 @@ describe('TimerScreen', () => {
     const tick = vi.spyOn(store.getState(), 'tick')
 
     render(<TimerScreen store={store} now={now} />)
-    fireEvent.click(screen.getByRole('button', { name: '开始专注' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Start focus' }))
 
     await act(async () => {
       await vi.advanceTimersByTimeAsync(1_000)
     })
     expect(tick).toHaveBeenCalledTimes(1)
 
-    fireEvent.click(screen.getByRole('button', { name: '暂停' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Pause' }))
     await act(async () => {
       await vi.advanceTimersByTimeAsync(2_000)
     })
@@ -115,7 +115,7 @@ describe('TimerScreen', () => {
     const tick = vi.spyOn(store.getState(), 'tick')
 
     const { unmount } = render(<TimerScreen store={store} now={now} />)
-    fireEvent.click(screen.getByRole('button', { name: '开始专注' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Start focus' }))
 
     await act(async () => {
       await vi.advanceTimersByTimeAsync(1_000)
@@ -135,7 +135,7 @@ describe('TimerScreen', () => {
     const { store, now, sessions, summaries, setNow } = createStore()
 
     render(<TimerScreen store={store} now={now} />)
-    fireEvent.click(screen.getByRole('button', { name: '开始专注' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Start focus' }))
 
     await act(async () => {
       setNow(1_501_000)
@@ -145,7 +145,7 @@ describe('TimerScreen', () => {
     expect(store.getState().timer.status).toBe('completed')
     expect(sessions).toHaveLength(1)
     expect(summaries).toHaveLength(1)
-    expect(screen.getByRole('status')).toHaveTextContent('专注已完成')
+    expect(screen.getByRole('status')).toHaveTextContent('Focus complete')
   })
 
   it('switches to a short break without increasing the completed focus count', async () => {
@@ -153,11 +153,11 @@ describe('TimerScreen', () => {
 
     render(<TimerScreen store={store} now={now} />)
 
-    expect(screen.getByText('已完成专注：0 / 4')).toBeVisible()
-    fireEvent.click(screen.getByRole('button', { name: '短休息' }))
+    expect(screen.getByText('Completed focus sessions: 0 / 4')).toBeVisible()
+    fireEvent.click(screen.getByRole('button', { name: 'Short break' }))
 
     await waitFor(() => expect(screen.getByText('05:00')).toBeVisible())
-    expect(screen.getByText('已完成专注：0 / 4')).toBeVisible()
+    expect(screen.getByText('Completed focus sessions: 0 / 4')).toBeVisible()
   })
 
   it('resets an active timer back to the configured focus duration', async () => {
@@ -165,11 +165,11 @@ describe('TimerScreen', () => {
 
     render(<TimerScreen store={store} now={now} />)
 
-    fireEvent.click(screen.getByRole('button', { name: '开始专注' }))
-    fireEvent.click(screen.getByRole('button', { name: '重置计时' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Start focus' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Reset timer' }))
 
     await waitFor(() => expect(screen.getByText('25:00')).toBeVisible())
-    expect(screen.getByRole('button', { name: '开始专注' })).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Start focus' })).toBeVisible()
   })
 
   it('records the task input and announces the timer status politely', () => {
@@ -177,11 +177,11 @@ describe('TimerScreen', () => {
 
     render(<TimerScreen store={store} now={now} />)
 
-    fireEvent.change(screen.getByLabelText('当前任务'), { target: { value: '复习英语' } })
+    fireEvent.change(screen.getByLabelText('Current task'), { target: { value: 'Review English' } })
 
-    expect(store.getState().task).toBe('复习英语')
+    expect(store.getState().task).toBe('Review English')
     expect(screen.getByRole('status')).toHaveAttribute('aria-live', 'polite')
-    expect(screen.getByRole('status')).toHaveTextContent('专注准备开始')
+    expect(screen.getByRole('status')).toHaveTextContent('Focus ready to begin')
   })
 
   it('prompts for a task before the user starts typing', () => {
@@ -189,6 +189,6 @@ describe('TimerScreen', () => {
 
     render(<TimerScreen store={store} now={now} />)
 
-    expect(screen.getByPlaceholderText('现在准备做些什么呢？')).toBeVisible()
+    expect(screen.getByPlaceholderText('What would you like to work on?')).toBeVisible()
   })
 })

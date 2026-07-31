@@ -43,9 +43,9 @@ describe('SettingsDialog', () => {
 
     render(<SettingsDialog store={store} />)
 
-    expect(screen.getByRole('dialog', { name: '设置' })).toBeVisible()
-    fireEvent.change(screen.getByLabelText('专注时长（分钟）'), { target: { value: '50' } })
-    fireEvent.click(screen.getByRole('button', { name: '保存设置' }))
+    expect(screen.getByRole('dialog', { name: 'Settings' })).toBeVisible()
+    fireEvent.change(screen.getByLabelText('Focus duration (minutes)'), { target: { value: '50' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Save settings' }))
 
     await waitFor(() => expect(store.getState().settings.focusMinutes).toBe(50))
     expect(savedSettings().focusMinutes).toBe(50)
@@ -56,8 +56,8 @@ describe('SettingsDialog', () => {
 
     render(<SettingsDialog store={store} />)
 
-    fireEvent.click(screen.getByLabelText('启用浏览器通知'))
-    fireEvent.click(screen.getByRole('button', { name: '保存设置' }))
+    fireEvent.click(screen.getByLabelText('Enable browser notifications'))
+    fireEvent.click(screen.getByRole('button', { name: 'Save settings' }))
 
     await waitFor(() => expect(savedSettings()).toMatchObject({ notificationsEnabled: false }))
     expect(store.getState().settings).toMatchObject({ notificationsEnabled: false })
@@ -69,11 +69,11 @@ describe('SettingsDialog', () => {
 
     render(<SettingsDialog store={store} onClose={onClose} />)
 
-    fireEvent.change(screen.getByLabelText('专注时长（分钟）'), { target: { value: '26' } })
-    fireEvent.click(screen.getByRole('button', { name: '保存设置' }))
+    fireEvent.change(screen.getByLabelText('Focus duration (minutes)'), { target: { value: '26' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Save settings' }))
 
-    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('设置已保存'))
-    expect(screen.getByRole('dialog', { name: '设置' })).toBeVisible()
+    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Settings saved'))
+    expect(screen.getByRole('dialog', { name: 'Settings' })).toBeVisible()
     expect(onClose).not.toHaveBeenCalled()
   })
 
@@ -88,11 +88,11 @@ describe('SettingsDialog', () => {
 
     render(<SettingsDialog store={store} />)
 
-    fireEvent.click(screen.getByRole('button', { name: '恢复默认设置' }))
-    expect(screen.getByRole('alertdialog', { name: '确认恢复默认设置' })).toBeVisible()
+    fireEvent.click(screen.getByRole('button', { name: 'Restore defaults' }))
+    expect(screen.getByRole('alertdialog', { name: 'Confirm restoring defaults' })).toBeVisible()
     expect(store.getState().settings.focusMinutes).toBe(50)
 
-    fireEvent.click(screen.getByRole('button', { name: '确认恢复默认设置' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Confirm restoring defaults' }))
 
     await waitFor(() => expect(store.getState().settings).toEqual(defaultTimerSettings))
     expect(savedSettings()).toEqual(defaultTimerSettings)
@@ -104,16 +104,16 @@ describe('SettingsDialog', () => {
 
     render(<SettingsDialog store={store} onClose={onClose} />)
 
-    const closeButton = screen.getByRole('button', { name: '关闭设置' })
+    const closeButton = screen.getByRole('button', { name: 'Close settings' })
     expect(closeButton).toHaveFocus()
 
-    const restoreButton = screen.getByRole('button', { name: '恢复默认设置' })
+    const restoreButton = screen.getByRole('button', { name: 'Restore defaults' })
     restoreButton.focus()
     fireEvent.click(restoreButton)
 
-    const confirmation = screen.getByRole('alertdialog', { name: '确认恢复默认设置' })
-    const cancelButton = screen.getByRole('button', { name: '取消' })
-    const confirmButton = screen.getByRole('button', { name: '确认恢复默认设置' })
+    const confirmation = screen.getByRole('alertdialog', { name: 'Confirm restoring defaults' })
+    const cancelButton = screen.getByRole('button', { name: 'Cancel' })
+    const confirmButton = screen.getByRole('button', { name: 'Confirm restoring defaults' })
     expect(cancelButton).toHaveFocus()
 
     confirmButton.focus()

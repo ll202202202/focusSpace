@@ -66,57 +66,57 @@ export function TimerScreen({ store, now = Date.now }: TimerScreenProps) {
   }
 
   return (
-    <section className="timer-stage" aria-label="番茄钟">
+    <section className="timer-stage" aria-label="Pomodoro timer">
       <fieldset>
-        <legend>计时模式</legend>
+        <legend>Timer mode</legend>
         <button
           type="button"
           aria-pressed={state.timer.selectedMode === 'focus'}
           onClick={() => handleModeSelection('focus')}
         >
-          专注
+          Focus
         </button>
         <button
           type="button"
           aria-pressed={state.timer.selectedMode === 'shortBreak'}
           onClick={() => handleModeSelection('shortBreak')}
         >
-          短休息
+          Short break
         </button>
         <button
           type="button"
           aria-pressed={state.timer.selectedMode === 'longBreak'}
           onClick={() => handleModeSelection('longBreak')}
         >
-          长休息
+          Long break
         </button>
       </fieldset>
-      <time aria-label="剩余时间" dateTime={`PT${remainingSeconds}S`}>
+      <time aria-label="Time remaining" dateTime={`PT${remainingSeconds}S`}>
         {formatDuration(remainingSeconds)}
       </time>
-      <p className="cycle-label">已完成专注：{state.timer.cycleIndex} / 4</p>
-      <ol className="cycle-dots" aria-label={`已完成专注轮次：${state.timer.cycleIndex} / 4`}>
+      <p className="cycle-label">Completed focus sessions: {state.timer.cycleIndex} / 4</p>
+      <ol className="cycle-dots" aria-label={`Completed focus rounds: ${state.timer.cycleIndex} / 4`}>
         {Array.from({ length: 4 }, (_, index) => (
-          <li key={index} aria-label={index < state.timer.cycleIndex ? '已完成' : '未完成'}>
+          <li key={index} aria-label={index < state.timer.cycleIndex ? 'Completed' : 'Not completed'}>
             {index < state.timer.cycleIndex ? '●' : '○'}
           </li>
         ))}
       </ol>
       <div className="task-field">
-        <label htmlFor="timer-task">当前任务</label>
+        <label htmlFor="timer-task">Current task</label>
         <input
           id="timer-task"
           type="text"
-          placeholder="现在准备做些什么呢？"
+          placeholder="What would you like to work on?"
           value={state.task ?? ''}
           onChange={(event) => store.getState().setTask(event.currentTarget.value || null)}
         />
       </div>
       <button type="button" className="primary-action" onClick={handlePrimaryAction}>
-        {isRunning ? '暂停' : isPaused ? '继续专注' : '开始专注'}
+        {isRunning ? 'Pause' : isPaused ? 'Resume focus' : 'Start focus'}
       </button>
-      <button type="button" className="reset-action" aria-label="重置计时" onClick={handleReset}>
-        重置
+      <button type="button" className="reset-action" aria-label="Reset timer" onClick={handleReset}>
+        Reset
       </button>
       <p role="status" aria-live="polite">
         {getStatusMessage(state, modeLabel)}
@@ -134,28 +134,28 @@ function formatDuration(totalSeconds: number): string {
 
 function getModeLabel(mode: TimerMode): string {
   return {
-    focus: '专注',
-    shortBreak: '短休息',
-    longBreak: '长休息',
+    focus: 'Focus',
+    shortBreak: 'Short break',
+    longBreak: 'Long break',
   }[mode]
 }
 
 function getStatusMessage(state: FocusStoreState, modeLabel: string): string {
   if (state.persistenceError !== null) {
-    return '数据保存失败，本次数据可能不会保存'
+    return 'Unable to save data. Changes from this session may be lost.'
   }
 
   if (state.completion !== null || state.timer.status === 'completed') {
-    return `${modeLabel}已完成`
+    return `${modeLabel} complete`
   }
 
   if (state.timer.status === 'running') {
-    return `${modeLabel}进行中`
+    return `${modeLabel} in progress`
   }
 
   if (state.timer.status === 'paused') {
-    return `${modeLabel}已暂停`
+    return `${modeLabel} paused`
   }
 
-  return `${modeLabel}准备开始`
+  return `${modeLabel} ready to begin`
 }
