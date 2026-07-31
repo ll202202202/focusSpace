@@ -86,18 +86,18 @@ export function App({ store, repositories, now = Date.now }: AppProps) {
     <div className="app-shell" data-testid="immersive-scene">
       <header className="app-header">
         <div>
-          <p className="app-kicker">沉浸式专注空间</p>
+          <p className="app-kicker">Your immersive focus space</p>
           <h1>Focus Space</h1>
         </div>
-        <button type="button" className="icon-button" aria-label="打开设置" onClick={() => setIsSettingsOpen(true)}>
-          设置
+        <button type="button" className="icon-button" aria-label="Open settings" onClick={() => setIsSettingsOpen(true)}>
+          Settings
         </button>
       </header>
       <main className="app-main immersive-timer">
         <TimerScreen store={focusStore} now={now} />
       </main>
       <div className="fullscreen-control">
-        <button type="button" aria-label="进入全屏" title="进入全屏" onClick={() => void requestFullscreen()}>
+        <button type="button" aria-label="Enter full screen" title="Enter full screen" onClick={() => void requestFullscreen()}>
           ⛶
         </button>
       </div>
@@ -116,9 +116,9 @@ async function requestFullscreen(): Promise<void> {
 
 function getModeLabel(mode: TimerMode): string {
   return {
-    focus: '专注',
-    shortBreak: '短休息',
-    longBreak: '长休息',
+    focus: 'Focus',
+    shortBreak: 'Short break',
+    longBreak: 'Long break',
   }[mode]
 }
 
@@ -149,7 +149,7 @@ function sendCompletionNotification(label: string): void {
   }
 
   try {
-    new window.Notification(`${label}已完成`, { body: '可以开始下一阶段了。' })
+    new window.Notification(`${label} complete`, { body: 'Time to begin the next phase.' })
   } catch {
     // Notifications are optional and must never interrupt the timer.
   }

@@ -1,57 +1,57 @@
-# Focus Space 技术设计文档
+# Focus Space Technical Design
 
-## 技术选型
+## Technology choices
 
-- React 19 + TypeScript：组件化 UI 与静态类型。
-- Vite：本地开发服务器与生产构建。
-- Zustand：应用运行时状态管理。
-- IndexedDB（通过 `idb` 封装）：本地优先的数据持久化。
-- Vitest + React Testing Library：领域逻辑与关键 UI 行为测试。
+- React 19 + TypeScript: component-based UI and static typing.
+- Vite: local development server and production builds.
+- Zustand: application runtime state management.
+- IndexedDB (wrapped with `idb`): local-first data persistence.
+- Vitest + React Testing Library: testing domain logic and critical UI behavior.
 
-## MVP 架构
+## MVP architecture
 
-浏览器中的 React 应用分为三层：UI 组件只负责展示和派发用户意图；Zustand store 协调运行状态；纯 TypeScript 领域模块处理番茄钟状态机与序列规则。IndexedDB 仓储负责持久化设置、会话与每日汇总，且不被组件直接访问。
+The React browser app is divided into three layers: UI components only render state and dispatch user intents; the Zustand store coordinates runtime state; and pure TypeScript domain modules handle the Pomodoro state machine and sequence rules. IndexedDB repositories persist settings, sessions, and daily summaries, and are never accessed directly by components.
 
 ```text
 React UI → Zustand application store → Timer domain engine
                                   └→ Repository port → IndexedDB adapter
 ```
 
-## 核心状态
+## Core state
 
-- `TimerMode`：`focus`、`shortBreak`、`longBreak`。
-- `TimerStatus`：`idle`、`running`、`paused`、`completed`。
-- `endAt`：运行中唯一的时间真相（Unix 毫秒）。剩余秒数由 `endAt - now` 计算，避免后台节流导致漂移。
-- `cycleIndex`：当前序列中已完成的专注轮次，范围 0–4。
+- `TimerMode`: `focus`, `shortBreak`, `longBreak`.
+- `TimerStatus`: `idle`, `running`, `paused`, `completed`.
+- `endAt`: the single source of time truth while running (Unix milliseconds). Remaining seconds are calculated from `endAt - now` to avoid drift caused by background throttling.
+- `cycleIndex`: the number of completed focus rounds in the current sequence, from 0–4.
 
-## 数据持久化
+## Data persistence
 
-| Store | 主键 | 内容 |
+| Store | Primary key | Contents |
 | --- | --- | --- |
-| `settings` | `default` | 计时时长、序列、主题、声音和辅助功能偏好 |
-| `sessions` | UUID | 一次计时的模式、状态、任务、开始/结束和实际时长 |
-| `dailySummaries` | `YYYY-MM-DD` | 有效专注数、专注秒数、中断数 |
+| `settings` | `default` | Timer durations, sequence, theme, sound, and accessibility preferences |
+| `sessions` | UUID | A timer's mode, status, task, start/end time, and actual duration |
+| `dailySummaries` | `YYYY-MM-DD` | Completed focus count, focus seconds, and interruption count |
 
-首次启动写入 PRD 的默认设置；设置变更后立即保存。计时中页面刷新时，应用读取 `endAt` 并据此恢复或完成会话。
+On first launch, the default settings from the PRD are written; setting changes are saved immediately. If the page reloads during a timer, the app reads `endAt` and uses it to restore or complete the session.
 
-## 领域边界与测试缝隙
+## Domain boundaries and test seams
 
-1. `timerMachine`：输入命令与当前状态，输出下一状态和领域事件；使用 Vitest 做纯函数测试。
-2. `sessionRepository`：通过仓储接口读写会话与设置；使用 fake repository 测试应用流程，不依赖浏览器实现细节。
-3. `TimerScreen`：以用户可见的模式、时间、开始/暂停/重置和完成提示作为测试边界；使用 React Testing Library。
+1. `timerMachine`: accepts commands and current state, then returns the next state and domain events; tested as pure functions with Vitest.
+2. `sessionRepository`: reads and writes sessions and settings through repository interfaces; application workflows are tested with a fake repository, without depending on browser implementation details.
+3. `TimerScreen`: tests are bounded by user-visible mode, time, start/pause/reset controls, and completion feedback; uses React Testing Library.
 
-## 异常与权限
+## Failures and permissions
 
-- 通知权限被拒绝或不支持时，显示非阻塞说明，不影响计时与音效。
-- IndexedDB 不可用时，退化到内存会话并展示“本次数据不会保存”的状态提示。
-- 音频播放被浏览器自动播放策略拦截时，仅在用户首次交互后尝试播放。
+- If notification permission is denied or unsupported, show non-blocking guidance without affecting the timer or sound.
+- If IndexedDB is unavailable, fall back to an in-memory session and display a status notice that data will not be saved this time.
+- If audio playback is blocked by browser autoplay policy, only attempt playback after the user's first interaction.
 
-## 可访问性与性能
+## Accessibility and performance
 
-- 主操作使用原生按钮和可见文字；状态更新写入 `aria-live="polite"` 区域。
-- 主题通过 CSS 变量实现；“减少动效”关闭非必要动画。
-- store 只保存 `endAt`；显示层每秒刷新一次，页面重新获得焦点时立即校正。
+- Primary actions use native buttons with visible text; status updates are written to an `aria-live="polite"` region.
+- Themes use CSS variables; “reduced motion” turns off non-essential animations.
+- The store saves only `endAt`; the display refreshes once per second and corrects immediately when the page regains focus.
 
-## 演进策略
+## Evolution strategy
 
-P0 只实现本地优先单机体验。P2 以 `SessionRepository` 与 `SettingsRepository` 接口为边界新增远程适配器；账号和同步不侵入计时领域模型。
+P0 implements only a local-first, single-device experience. P2 adds remote adapters behind the `SessionRepository` and `SettingsRepository` interfaces; accounts and synchronization do not intrude on the timer domain model.

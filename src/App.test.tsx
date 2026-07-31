@@ -41,11 +41,11 @@ describe('App', () => {
     expect(document.documentElement).toHaveAttribute('data-theme', 'dark')
     expect(document.documentElement).toHaveAttribute('data-reduced-motion', 'true')
 
-    fireEvent.click(screen.getByRole('button', { name: '打开设置' }))
-    expect(screen.getByRole('dialog', { name: '设置' })).toBeVisible()
+    fireEvent.click(screen.getByRole('button', { name: 'Open settings' }))
+    expect(screen.getByRole('dialog', { name: 'Settings' })).toBeVisible()
 
-    fireEvent.click(screen.getByRole('button', { name: '关闭设置' }))
-    expect(screen.queryByRole('dialog', { name: '设置' })).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Close settings' }))
+    expect(screen.queryByRole('dialog', { name: 'Settings' })).not.toBeInTheDocument()
   })
 
   it('checks the timer when the window regains focus or the page becomes visible', () => {
@@ -79,7 +79,7 @@ describe('App', () => {
 
     render(<App store={store} />)
 
-    fireEvent.click(screen.getByRole('button', { name: '进入全屏' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Enter full screen' }))
 
     expect(requestFullscreen).toHaveBeenCalledOnce()
   })
@@ -137,7 +137,7 @@ describe('App', () => {
       })
     })
 
-    await waitFor(() => expect(notification).toHaveBeenCalledWith('专注已完成', { body: '可以开始下一阶段了。' }))
+    await waitFor(() => expect(notification).toHaveBeenCalledWith('Focus complete', { body: 'Time to begin the next phase.' }))
     expect(createAudioContext).toHaveBeenCalledOnce()
     expect(oscillator.start).toHaveBeenCalledOnce()
   })
@@ -194,8 +194,8 @@ describe('App', () => {
       </StrictMode>,
     )
 
-    fireEvent.click(screen.getByRole('button', { name: '打开设置' }))
-    fireEvent.click(screen.getByRole('button', { name: '保存设置' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Open settings' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Save settings' }))
 
     await waitFor(() => expect(saveCalls).toBe(1))
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()

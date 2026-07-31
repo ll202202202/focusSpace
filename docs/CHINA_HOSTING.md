@@ -1,76 +1,76 @@
-# 中国大陆可访问的部署方案
+# Deployment Options Accessible from Mainland China
 
-Focus Space 是一个由 Vite 构建的纯静态 React 应用；构建产物是 `dist/`，不需要 Node 服务端、数据库或 API。应用设置和记录存于访问者浏览器的 IndexedDB。因此可选择国内静态托管，而无需购买云服务器。
+Focus Space is a pure static React application built with Vite. Its build output is `dist/`, and it needs no Node server, database, or API. Application settings and records are stored in each visitor's browser IndexedDB. You can therefore use domestic static hosting without purchasing a cloud server.
 
-## 推荐顺序
+## Recommended order
 
-1. **腾讯云 CloudBase 静态网站托管**：首次部署最省运维，适合小型个人工具；有控制台上传/CLI 部署和平台域名，之后可按需要绑定自有域名。
-2. **腾讯云 COS + CDN**：适合希望完全掌控存储桶、域名与流量加速的部署；需要手动上传 `dist/` 并配置静态网站。
-3. **阿里云 OSS + CDN**：与 COS + CDN 架构相同，适合已有阿里云账号、域名或 CDN 资源的情况。
+1. **Tencent Cloud CloudBase static website hosting**: the lowest operational overhead for a first deployment and suitable for a small personal tool. It supports console uploads/CLI deployment and provides a platform domain; bind a custom domain later if needed.
+2. **Tencent Cloud COS + CDN**: suitable when you want full control over the bucket, domain, and traffic acceleration. You must upload `dist/` and configure the static website manually.
+3. **Alibaba Cloud OSS + CDN**: the same architecture as COS + CDN; suitable if you already have an Alibaba Cloud account, domain, or CDN resources.
 
-> 结论：若目标是“国内普通网络直接访问”，选用位于中国大陆地域的腾讯云或阿里云资源，并使用已完成备案的自定义域名。国际平台域名（如 Vercel 的 `vercel.app`）在中国大陆网络的可达性并不稳定。
+> Bottom line: for direct access from ordinary mainland-China networks, use Tencent Cloud or Alibaba Cloud resources located in mainland China and a custom domain with completed ICP filing. International-platform domains (such as Vercel's `vercel.app`) are not reliably reachable from mainland-China networks.
 
-## 方案一：腾讯云 CloudBase 静态网站托管（优先尝试）
+## Option 1: Tencent Cloud CloudBase static website hosting (try first)
 
-**适配性**：适合本项目。先执行 `npm run build`，再将生成的 `dist/` 目录部署为静态文件即可。没有后端时，不需要云函数或数据库。
+**Fit**: well suited to this project. Run `npm run build`, then deploy the generated `dist/` directory as static files. No cloud functions or database are needed when there is no backend.
 
-**最低门槛步骤**：
+**Minimum steps**:
 
-1. 注册/登录腾讯云并完成账号实名认证。
-2. 在 CloudBase 控制台创建环境，选择中国大陆地域。
-3. 进入静态网站托管，上传本项目的 `dist/` 目录（首页为 `index.html`）。
-4. 先用平台提供的访问域名验证页面；需要品牌域名时，在域名管理中绑定域名并按提示配置 DNS/CNAME 与 HTTPS 证书。
+1. Register/sign in to Tencent Cloud and complete account real-name verification.
+2. Create an environment in the CloudBase console and choose a mainland-China region.
+3. Open Static Website Hosting and upload this project's `dist/` directory (`index.html` is the home page).
+4. First validate the site on the domain provided by the platform. When you need a branded domain, bind it in domain management and follow the prompts to configure DNS/CNAME and an HTTPS certificate.
 
-**实名、备案、域名**：实名是开通中国大陆云资源的实际前置条件；对外服务使用中国大陆自定义域名时，应按平台提示完成网站 ICP 备案。是否可长期使用平台临时域名、以及免费额度/价格，会随 CloudBase 套餐与地域调整，应以控制台当前报价为准。
+**Real-name verification, filing, and domains**: real-name verification is a practical prerequisite for enabling mainland-China cloud resources. When externally serving a mainland-China custom domain, complete website ICP filing as directed by the platform. Whether a temporary platform domain can be used long-term, and the free quota/prices, may change with the CloudBase plan and region; use the current console pricing as the source of truth.
 
-**国内访问与成本**：资源在中国大陆地域并配合国内 CDN 时，面向大陆访问通常更稳定。小流量个人站点通常先从免费/低配套餐起步；超过免费额度后的存储、下行流量和请求按账单计费。
+**Domestic access and costs**: resources in a mainland-China region, combined with a domestic CDN, are generally more stable for mainland visitors. Small personal sites normally start with a free or low-tier plan; storage, outbound traffic, and requests over the free quota are billed.
 
-官方入口：[CloudBase 产品页](https://cloud.tencent.com/product/tcb) · [CloudBase 文档中心](https://cloud.tencent.com/document/product/876)
+Official entry points: [CloudBase product page](https://cloud.tencent.com/product/tcb) · [CloudBase documentation center](https://cloud.tencent.com/document/product/876)
 
-## 方案二：腾讯云 COS + CDN
+## Option 2: Tencent Cloud COS + CDN
 
-**适配性**：完全适合 Vite。COS 官方将静态网站定义为 HTML 和客户端脚本，并明确不支持 PHP、JSP、ASP.NET 等服务端脚本；本项目正是这一类静态内容。
+**Fit**: fully suitable for Vite. COS officially defines a static website as HTML and client-side scripts, and explicitly does not support server-side scripts such as PHP, JSP, or ASP.NET. This project is exactly that kind of static content.
 
-**最低门槛步骤**：
+**Minimum steps**:
 
-1. 完成腾讯云实名认证，创建中国大陆地域 COS 存储桶。
-2. 本地执行 `npm run build`，把 `dist/` 内所有文件上传到桶根目录。
-3. 把桶访问权限设为“公有读私有写”；在“静态网站”中启用托管，首页填 `index.html`，可选错误页填 `index.html`（单页应用路由时尤其有用）。
-4. 添加自定义源站域名，源站类型选择“静态网站源站”，将域名 CNAME 解析到 COS，并为 HTTPS 绑定证书。
-5. 可选：在 CDN 中添加加速域名并让 CDN 回源 COS；面向全国用户时建议使用。
+1. Complete Tencent Cloud real-name verification and create a COS bucket in a mainland-China region.
+2. Run `npm run build` locally and upload all files inside `dist/` to the bucket root.
+3. Set the bucket access permission to “public read, private write.” Enable Static Website Hosting, set the home page to `index.html`, and optionally set the error page to `index.html` (especially useful for single-page-app routing).
+4. Add a custom origin domain, select “static website origin” as the origin type, point the domain CNAME to COS, and bind a certificate for HTTPS.
+5. Optional: add an acceleration domain in CDN and configure CDN to use COS as its origin; this is recommended for users across the country.
 
-**实名、备案、域名**：COS 官方文档说明，2024-01-01 后创建的桶不能再用 COS 默认（含静态网站）域名直接预览，静态站需要配置并使用自定义域名。腾讯云自定义源站域名文档也明确要求输入的域名“已备案”，且需配置 CNAME。因此，用于中国大陆公开访问时，**域名备案是实质必需项**。
+**Real-name verification, filing, and domains**: COS documentation states that buckets created after 2024-01-01 can no longer be previewed directly with a default COS (including static website) domain; static sites need a custom domain. Tencent Cloud's custom-origin-domain documentation also explicitly requires the supplied domain to be “ICP filed” and configured with CNAME. Therefore, for public access in mainland China, **domain ICP filing is effectively required**.
 
-**成本**：不需要服务器费用；按 COS 的存储量、请求量和下行流量收费，CDN 加速另计。小型单页站点文件很少，通常成本主要取决于访问量，而不是存储量。
+**Costs**: there is no server fee; COS charges for storage, requests, and outbound traffic, while CDN acceleration is billed separately. A small single-page site has few files, so cost usually depends on traffic rather than storage.
 
-官方依据：[COS 设置静态网站](https://cloud.tencent.com/document/product/436/14984) · [COS 自定义源站域名（含“域名已备案”、CNAME、HTTPS）](https://cloud.tencent.com/document/product/436/36638) · [COS 产品定价](https://cloud.tencent.com/pricing/cos)
+Official sources: [COS static website configuration](https://cloud.tencent.com/document/product/436/14984) · [COS custom origin domain (including “ICP-filed domain,” CNAME, and HTTPS)](https://cloud.tencent.com/document/product/436/36638) · [COS pricing](https://cloud.tencent.com/pricing/cos)
 
-## 方案三：阿里云 OSS + CDN
+## Option 3: Alibaba Cloud OSS + CDN
 
-**适配性**：完全适合 Vite 静态产物，架构与 COS 相同：OSS 托管 `dist/`，CDN 负责全国访问加速。
+**Fit**: fully suitable for Vite static output, with the same architecture as COS: OSS hosts `dist/` and CDN provides nationwide access acceleration.
 
-**最低门槛步骤**：
+**Minimum steps**:
 
-1. 完成阿里云实名认证，创建中国大陆地域 OSS Bucket。
-2. 运行 `npm run build`，上传 `dist/` 文件到 Bucket 根目录，并将所需对象设为可公开读取。
-3. 在 OSS 的“静态网站托管”中启用首页 `index.html`；需要 SPA 回退时配置错误页。
-4. 绑定自定义域名并配置 CNAME、HTTPS 证书；如需加速，在 CDN 中添加域名并将 OSS 作为源站。
+1. Complete Alibaba Cloud real-name verification and create an OSS Bucket in a mainland-China region.
+2. Run `npm run build`, upload the `dist/` files to the Bucket root, and make the required objects publicly readable.
+3. Enable `index.html` as the home page in OSS Static Website Hosting; configure an error page when SPA fallback is needed.
+4. Bind a custom domain and configure CNAME and an HTTPS certificate. To accelerate access, add the domain in CDN and use OSS as the origin.
 
-**实名、备案、域名**：用于中国大陆的自定义域名须符合阿里云的备案接入要求；购买新域名不等于备案完成。备案通过后再绑定域名、配置 DNS 和证书。不要把 OSS/COS 默认测试域名当作长期公网域名。
+**Real-name verification, filing, and domains**: a custom domain used in mainland China must meet Alibaba Cloud's filing-access requirements; buying a new domain does not mean filing is complete. After approval, bind the domain and configure DNS and the certificate. Do not treat OSS/COS default test domains as long-term public domains.
 
-**成本**：无服务器常驻费用；主要为 OSS 存储、请求与公网下行流量，CDN 流量独立计费。适合已有阿里云资源的用户，价格请在购买页按地域和实际流量核算。
+**Costs**: no always-on server cost; the primary charges are OSS storage, requests, and public outbound traffic, with CDN traffic billed separately. It suits users who already have Alibaba Cloud resources; calculate pricing from the purchase page using the selected region and actual traffic.
 
-官方依据：[OSS 静态网站托管](https://help.aliyun.com/zh/oss/user-guide/static-website-hosting) · [OSS 产品定价](https://www.aliyun.com/price/product?spm=5176.7933691.J_3207526240.1.306a4a8fP7vseM&product=oss) · [阿里云备案](https://help.aliyun.com/zh/icp-filing/)
+Official sources: [OSS static website hosting](https://help.aliyun.com/zh/oss/user-guide/static-website-hosting) · [OSS pricing](https://www.aliyun.com/price/product?spm=5176.7933691.J_3207526240.1.306a4a8fP7vseM&product=oss) · [Alibaba Cloud ICP filing](https://help.aliyun.com/zh/icp-filing/)
 
-## 最适合当前项目的实际选择
+## Most practical choices for the current project
 
-- **仅自己或少数同事临时使用**：先用 CloudBase 静态托管的控制台上传 `dist/`，不必改动项目代码。
-- **要稳定对外公开、长期使用**：买一个 `.cn` / `.com` 域名，完成个人网站 ICP 备案，然后用 **COS + CDN** 或 **OSS + CDN**；这是与 Vercel 不同的国内线路方案。
-- **项目代码仍在 GitHub**：国内对象存储不必直接连接 GitHub。每次改完运行 `npm run build` 后上传 `dist/` 即可；后续若需要自动化，再配置 GitHub Actions / 云开发流水线。注意 GitHub 本身在大陆的连通性也可能影响自动构建，不影响已部署的网站访问。
+- **Temporary use by yourself or a small group of colleagues**: upload `dist/` through the CloudBase static-hosting console; no project-code changes are needed.
+- **Stable, long-term public use**: buy a `.cn` / `.com` domain, complete personal-site ICP filing, then use **COS + CDN** or **OSS + CDN**. This is a domestic-route alternative to Vercel.
+- **Project code remains on GitHub**: domestic object storage does not need to connect directly to GitHub. After each change, run `npm run build` and upload `dist/`; configure GitHub Actions or a cloud-development pipeline later if automation is needed. GitHub connectivity in mainland China can also affect automated builds, but not access to an already deployed website.
 
-## 发布前检查
+## Pre-release checklist
 
-- `npm run build` 成功，且上传的是 `dist/` **内的文件**，不是整个项目目录。
-- 首页为 `index.html`，HTTPS 证书已绑定，DNS CNAME 已生效。
-- 站点若使用自定义中国大陆域名：确认备案号已完成并按要求在页面底部展示（如备案服务商/监管要求适用）。
-- 本项目的 IndexedDB 数据只在用户当前浏览器与当前域名下保存；从 Vercel 换到新域名后，旧域名中的本地专注记录不会自动迁移。
+- `npm run build` succeeds, and you upload the files **inside** `dist/`, not the whole project directory.
+- The home page is `index.html`, the HTTPS certificate is bound, and the DNS CNAME is effective.
+- If the site uses a custom mainland-China domain, confirm that the ICP filing number is complete and display it in the page footer where required by the filing provider/regulator.
+- This project's IndexedDB data is saved only for the user's current browser and current domain. After moving from Vercel to a new domain, focus records stored under the old domain will not migrate automatically.

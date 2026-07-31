@@ -1,27 +1,27 @@
 # Focus Space
 
-沉浸式专注空间：一个本地优先的沉浸式番茄钟。它支持专注、短休息和长休息模式，使用 IndexedDB 保存设置与专注记录。
+An immersive focus space: a local-first Pomodoro timer. It supports focus, short-break, and long-break modes, and uses IndexedDB to save settings and focus records.
 
-## 在线体验
+## Live demo
 
 [https://focus-space-sepia.vercel.app/](https://focus-space-sepia.vercel.app/)
 
-## 启动
+## Getting started
 
 ```bash
 npm install
 npm run dev
 ```
 
-## 验证
+## Verification
 
 ```bash
 npm test -- --run
 npm run build
 ```
 
-## 技术栈
+## Tech stack
 
 - React + TypeScript + Vite
-- Zustand 管理计时状态
-- IndexedDB（通过 `idb`）保存设置和会话
+- Zustand for timer state management
+- IndexedDB (via `idb`) for settings and session persistence

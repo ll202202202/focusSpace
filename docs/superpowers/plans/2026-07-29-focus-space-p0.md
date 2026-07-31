@@ -102,8 +102,8 @@ expect(fakeRepository.sessions[0]).toMatchObject({ status: 'completed', mode: 'f
 
 ```tsx
 render(<TimerScreen store={store} />);
-await user.click(screen.getByRole('button', { name: '开始专注' }));
-expect(screen.getByRole('button', { name: '暂停' })).toBeVisible();
+await user.click(screen.getByRole('button', { name: 'Start focus' }));
+expect(screen.getByRole('button', { name: 'Pause' })).toBeVisible();
 ```
 
 - [ ] **Step 2: Run `npm test -- src/components/TimerScreen.test.tsx`; expected result: fail because the component is absent.**
@@ -119,9 +119,9 @@ expect(screen.getByRole('button', { name: '暂停' })).toBeVisible();
 - [ ] **Step 1: Write a failing test that changes focus duration to 50 minutes and saves it.**
 
 ```tsx
-await user.clear(screen.getByLabelText('专注时长（分钟）'));
-await user.type(screen.getByLabelText('专注时长（分钟）'), '50');
-await user.click(screen.getByRole('button', { name: '保存设置' }));
+await user.clear(screen.getByLabelText('Focus duration (minutes)'));
+await user.type(screen.getByLabelText('Focus duration (minutes)'), '50');
+await user.click(screen.getByRole('button', { name: 'Save settings' }));
 expect(store.getState().settings.focusMinutes).toBe(50);
 ```
 
