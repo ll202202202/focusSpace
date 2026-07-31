@@ -107,6 +107,7 @@ export function TimerScreen({ store, now = Date.now }: TimerScreenProps) {
         <input
           id="timer-task"
           type="text"
+          placeholder="现在准备做些什么呢？"
           value={state.task ?? ''}
           onChange={(event) => store.getState().setTask(event.currentTarget.value || null)}
         />

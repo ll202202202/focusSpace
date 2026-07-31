@@ -17,7 +17,7 @@ button, input, select { font: inherit; }
 .timer-stage time { font-size: clamp(5.5rem, 14vw, 9.5rem); font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -.09em; line-height: .85; text-shadow: 0 5px 26px rgb(0 0 0 / .25); }
 .cycle-label { margin: 0; opacity: .86; }
 .cycle-dots { display: flex; gap: .45rem; margin: -.5rem 0 0; padding: 0; list-style: none; } .cycle-dots li { font-size: 1.15rem; }
-.task-field { width: min(100%, 24rem); } .task-field label { display: none; } .task-field input { width: 100%; min-height: 2.8rem; border: 1px solid rgb(255 255 255 / .48); border-radius: 999px; padding: 0 1.2rem; color: #fff; background: rgb(8 18 51 / .3); outline: none; } .task-field input::placeholder { color: #fff; }
+.task-field { width: min(100%, 24rem); } .task-field label { display: none; } .task-field input { width: 100%; min-height: 2.8rem; border: 1px solid rgb(255 255 255 / .48); border-radius: 999px; padding: 0 1.2rem; color: #fff; background: rgb(8 18 51 / .3); outline: none; } .task-field input::placeholder { color: rgb(255 255 255 / .58); opacity: 1; }
 .primary-action { min-width: 9rem; min-height: 3.2rem; border: 0; border-radius: 999px; color: #17152d; background: #fff; font-size: 1.1rem; font-weight: 800; cursor: pointer; box-shadow: 0 8px 24px rgb(0 0 0 / .18); }
 .reset-action { width: 2.8rem; height: 2.8rem; margin-top: -.75rem; border: 1px solid rgb(255 255 255 / .7); border-radius: 50%; color: #fff; background: transparent; font-size: 0; cursor: pointer; } .reset-action::after { content: "↻"; font-size: 1.75rem; }
 .timer-stage [role='status'] { margin: .25rem 0 0; font-size: .9rem; opacity: .84; }

@@ -183,4 +183,12 @@ describe('TimerScreen', () => {
     expect(screen.getByRole('status')).toHaveAttribute('aria-live', 'polite')
     expect(screen.getByRole('status')).toHaveTextContent('专注准备开始')
   })
+
+  it('prompts for a task before the user starts typing', () => {
+    const { store, now } = createStore()
+
+    render(<TimerScreen store={store} now={now} />)
+
+    expect(screen.getByPlaceholderText('现在准备做些什么呢？')).toBeVisible()
+  })
 })
